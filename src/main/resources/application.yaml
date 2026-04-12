@@ -1,10 +1,9 @@
 spring:
   application:
     name: splitso-service
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/splitso
   security:
     jwt:
-      secret: fakeSecretKeyForJWT
+      secret: ${JWT_SECRET}
       expiration: 86400000
+  mongodb:
+    uri: ${DATABASE_URI}
