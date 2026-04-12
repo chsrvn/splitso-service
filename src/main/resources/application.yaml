@@ -1,3 +1,10 @@
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+
 spring:
   application:
     name: splitso-service
