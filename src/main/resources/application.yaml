@@ -7,3 +7,7 @@ spring:
       expiration: 86400000
   mongodb:
     uri: ${DATABASE_URI}
+
+logging:
+  level:
+    root: debug
