@@ -10,4 +10,14 @@ spring:
 
 logging:
   level:
-    root: debug
+    root: info
+    com.chsrvn.splitsoservice: debug
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
+  logback:
+    rollingpolicy:
+      max-history: 10
+      max-size: 10MB
