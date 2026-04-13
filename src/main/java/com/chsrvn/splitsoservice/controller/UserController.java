@@ -19,44 +19,61 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/me")
-    public ResponseEntity<User> getCurrentUser(Authentication authentication) {
+    public ResponseEntity<Map<String, Object>> getCurrentUser(Authentication authentication) {
         String email = authentication.getName();
         Optional<User> userOpt = userService.getUserByEmail(email);
         if (userOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         User user = userOpt.get();
-        user.setPassword(null); // Don't return password
-        user.setLastFivePasswords(null); // Don't return last passwords
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(Map.of(
+            "id", user.getId(),
+            "name", user.getName(),
+            "email", user.getEmail(),
+            "phone", user.getPhone(),
+            "avatarUrl", user.getAvatarUrl() != null ? user.getAvatarUrl() : "",
+            "currency", user.getCurrency(),
+            "createDttm", user.getCreateDttm(),
+            "chgDttm", user.getChgDttm()
+        ));
     }
 
     @PutMapping("/me")
-    public ResponseEntity<User> updateProfile(@Valid @RequestBody Map<String, String> updates, Authentication authentication) {
+    public ResponseEntity<Map<String, Object>> updateProfile(@RequestBody Map<String, String> updates, Authentication authentication) {
         String email = authentication.getName();
         Optional<User> userOpt = userService.getUserByEmail(email);
         if (userOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         User user = userOpt.get();
-        if (updates.containsKey("firstName")) {
-            user.setFirstName(updates.get("firstName"));
+        if (updates.containsKey("name")) {
+            user.setName(updates.get("name"));
         }
-        if (updates.containsKey("lastName")) {
-            user.setLastName(updates.get("lastName"));
+        if (updates.containsKey("phone")) {
+            user.setPhone(updates.get("phone"));
         }
-        // Don't allow email change for simplicity
+        if (updates.containsKey("avatarUrl")) {
+            user.setAvatarUrl(updates.get("avatarUrl"));
+        }
+        if (updates.containsKey("currency")) {
+            user.setCurrency(updates.get("currency"));
+        }
         User saved = userService.updateUser(user);
-        saved.setPassword(null);
-        saved.setLastFivePasswords(null);
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok(Map.of(
+            "id", saved.getId(),
+            "name", saved.getName(),
+            "email", saved.getEmail(),
+            "phone", saved.getPhone(),
+            "avatarUrl", saved.getAvatarUrl() != null ? saved.getAvatarUrl() : "",
+            "currency", saved.getCurrency()
+        ));
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<Void> changePassword(@RequestBody Map<String, String> passwords, Authentication authentication) {
+    public ResponseEntity<Map<String, String>> changePassword(@RequestBody Map<String, String> passwords, Authentication authentication) {
         String oldPassword = passwords.get("oldPassword");
         String newPassword = passwords.get("newPassword");
         userService.changePassword(authentication.getName(), oldPassword, newPassword);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
     }
 }
