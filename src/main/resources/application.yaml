@@ -15,7 +15,7 @@ spring:
       secret: ${JWT_SECRET:dev-secret-key}
       expiration: 86400000
   mongodb:
-    uri: ${DATABASE_URI:mongodb://localhost:27017/test}
+    uri: ${DATABASE_URI}
     connect-timeout: 5000
     socket-timeout: 5000
   data:
