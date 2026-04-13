@@ -4,22 +4,25 @@ server:
     context-path: /
   compression:
     enabled: true
+  error:
+    include-stacktrace: always
 
 spring:
   application:
     name: splitso-service
   security:
     jwt:
-      secret: ${JWT_SECRET}
+      secret: ${JWT_SECRET:dev-secret-key}
       expiration: 86400000
   mongodb:
-    uri: ${DATABASE_URI}
+    uri: ${DATABASE_URI:mongodb://localhost:27017/test}
+  data:
+    mongodb:
+      auto-index-creation: true
 
 logging:
   level:
-    root: info
-    com.chsrvn.splitsoservice: debug
-  logback:
-    rollingpolicy:
-      max-history: 10
-      max-size: 10MB
+    root: INFO
+    com.chsrvn.splitsoservice: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
