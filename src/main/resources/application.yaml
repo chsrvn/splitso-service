@@ -16,9 +16,16 @@ spring:
       expiration: 86400000
   mongodb:
     uri: ${DATABASE_URI:mongodb://localhost:27017/test}
+    connect-timeout: 5000
+    socket-timeout: 5000
   data:
     mongodb:
-      auto-index-creation: true
+      auto-index-creation: false
+      repositories:
+        enabled: true
+  devtools:
+    restart:
+      enabled: false
 
 logging:
   level:
