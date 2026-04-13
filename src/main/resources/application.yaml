@@ -14,18 +14,19 @@ spring:
     jwt:
       secret: ${JWT_SECRET:dev-secret-key}
       expiration: 86400000
-  mongodb:
-    uri: ${DATABASE_URI}
-    connect-timeout: 5000
-    socket-timeout: 5000
-  data:
-    mongodb:
-      auto-index-creation: false
-      repositories:
-        enabled: true
-  devtools:
-    restart:
-      enabled: false
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
 
 logging:
   level:

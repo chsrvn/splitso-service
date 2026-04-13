@@ -1,36 +1,53 @@
 package com.chsrvn.splitsoservice.entity;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import java.util.List;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-@Document(collection = "users")
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Table(name = "users")
 @Data
 public class User {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "uuid")
+    private UUID id;
+
+    @NotBlank
+    @Column(nullable = false)
+    private String name;
 
     @Email
     @NotBlank
+    @Column(unique = true, nullable = false)
     private String email;
 
     @NotBlank
-    @Size(min = 2, max = 50)
-    private String firstName;
+    @Column(unique = true, nullable = false)
+    private String phone;
 
-    @NotBlank
-    @Size(min = 2, max = 50)
-    private String lastName;
+    @Column(columnDefinition = "text")
+    private String passwordHash;
 
-    @NotBlank
-    private String password;
+    @Column(name = "avatar_url", columnDefinition = "text")
+    private String avatarUrl;
 
-    private List<String> lastFivePasswords;
+    @Column(columnDefinition = "varchar(10)")
+    private String currency;
+
+    @CreationTimestamp
+    @Column(name = "create_dttm", nullable = false, updatable = false)
+    private LocalDateTime createDttm;
+
+    @UpdateTimestamp
+    @Column(name = "chg_dttm")
+    private LocalDateTime chgDttm;
 
 }

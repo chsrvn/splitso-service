@@ -17,9 +17,9 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@Valid @RequestBody User user) {
+    public ResponseEntity<Map<String, String>> register(@Valid @RequestBody User user) {
         User savedUser = userService.register(user);
-        return ResponseEntity.ok(savedUser);
+        return ResponseEntity.ok(Map.of("id", savedUser.getId().toString(), "email", savedUser.getEmail()));
     }
 
     @PostMapping("/login")

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import jakarta.validation.Valid;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,46 +24,42 @@ public class UserService {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
-
-        // Check if password is in last five, but since new user, lastFive is null
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if (user.getLastFivePasswords() == null) {
-            user.setLastFivePasswords(new ArrayList<>());
+        if (userRepository.findByPhone(user.getPhone()).isPresent()) {
+            throw new RuntimeException("Phone already exists");
         }
-        user.getLastFivePasswords().add(user.getPassword());
-        // Keep only last 5, but since new, it's 1
+
+        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+        if (user.getCurrency() == null) {
+            user.setCurrency("INR");
+        }
 
         return userRepository.save(user);
     }
 
     public String login(String email, String password) {
         Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPassword())) {
+        if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPasswordHash())) {
             throw new RuntimeException("Invalid credentials");
         }
-        // For JWT, need UserDetails, but since no roles, create a simple one
         return jwtUtil.generateToken(new org.springframework.security.core.userdetails.User(email, password, new ArrayList<>()));
     }
 
     public void changePassword(String email, String oldPassword, String newPassword) {
         Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isEmpty() || !passwordEncoder.matches(oldPassword, userOpt.get().getPassword())) {
+        if (userOpt.isEmpty() || !passwordEncoder.matches(oldPassword, userOpt.get().getPasswordHash())) {
             throw new RuntimeException("Invalid credentials");
         }
         User user = userOpt.get();
-        if (user.getLastFivePasswords().contains(passwordEncoder.encode(newPassword))) {
-            throw new RuntimeException("Password cannot be one of the last five passwords");
-        }
-        user.setPassword(passwordEncoder.encode(newPassword));
-        user.getLastFivePasswords().add(user.getPassword());
-        if (user.getLastFivePasswords().size() > 5) {
-            user.getLastFivePasswords().remove(0);
-        }
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public Optional<User> getUserById(UUID id) {
+        return userRepository.findById(id);
     }
 
     public User updateUser(User user) {
