@@ -34,7 +34,7 @@ public class User {
     private String phone;
 
     @Column(columnDefinition = "text")
-    private String passwordHash;
+    private String password;
 
     @Column(name = "avatar_url", columnDefinition = "text")
     private String avatarUrl;

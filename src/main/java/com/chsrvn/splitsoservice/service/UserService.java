@@ -28,7 +28,7 @@ public class UserService {
             throw new RuntimeException("Phone already exists");
         }
 
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (user.getCurrency() == null) {
             user.setCurrency("INR");
         }
@@ -38,7 +38,7 @@ public class UserService {
 
     public String login(String email, String password) {
         Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPasswordHash())) {
+        if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
         return jwtUtil.generateToken(new org.springframework.security.core.userdetails.User(email, password, new ArrayList<>()));
@@ -46,11 +46,11 @@ public class UserService {
 
     public void changePassword(String email, String oldPassword, String newPassword) {
         Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isEmpty() || !passwordEncoder.matches(oldPassword, userOpt.get().getPasswordHash())) {
+        if (userOpt.isEmpty() || !passwordEncoder.matches(oldPassword, userOpt.get().getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
         User user = userOpt.get();
-        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
