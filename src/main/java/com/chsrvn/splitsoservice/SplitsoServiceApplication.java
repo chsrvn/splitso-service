@@ -13,6 +13,7 @@ public class SplitsoServiceApplication {
 
     public static void main(String[] args) {
         try {
+            System.out.println("Application started successfully!");
             ConfigurableApplicationContext context = SpringApplication.run(SplitsoServiceApplication.class, args);
             logger.info("========================================");
             logger.info("Application started successfully!");
