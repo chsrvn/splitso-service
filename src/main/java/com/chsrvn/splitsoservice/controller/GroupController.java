@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -16,6 +17,17 @@ public class GroupController {
 
     public GroupController(GroupService groupService) {
         this.groupService = groupService;
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Group>> getGroupsForUser(@PathVariable UUID userId) {
+        List<Group> groups = groupService.getGroupsForUser(userId);
+
+        if (groups.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(groups);
     }
 
     @PostMapping

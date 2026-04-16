@@ -6,6 +6,7 @@ import com.chsrvn.splitsoservice.repository.GroupMemberRepository;
 import com.chsrvn.splitsoservice.repository.GroupRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -17,6 +18,11 @@ public class GroupService {
     public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
+    }
+
+    public List<Group> getGroupsForUser(UUID userId) {
+        // This calls the custom JPQL query we defined in GroupMemberRepository
+        return groupMemberRepository.findAllGroupsByUserId(userId);
     }
 
     public Group createGroup(Group group) {
