@@ -41,7 +41,8 @@ public class UserService {
         if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
-        return jwtUtil.generateToken(new org.springframework.security.core.userdetails.User(email, password, new ArrayList<>()));
+        User user = userOpt.get();
+        return jwtUtil.generateToken(new org.springframework.security.core.userdetails.User(email, password, new ArrayList<>()), user.getId().toString());
     }
 
     public void changePassword(String email, String oldPassword, String newPassword) {
